@@ -1,0 +1,1147 @@
+{
+	"info": {
+		"_postman_id": "4736c555-08c5-4c2b-bd3d-7651ccbafe68",
+		"name": "API test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32343473"
+	},
+	"item": [
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Get all posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate that response is not empty', function () {",
+									"    pm.expect(response, 'Response is empty').to.not.be.empty;",
+									"})",
+									"",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an array').to.be.an('array');",
+									"    pm.expect(response[0], 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an array').to.be.an('array');",
+									"    pm.expect(response[0], 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test('Expect response to contain initial posts', function () {",
+									"    pm.expect(response.length).to.equal(2);",
+									"});",
+									"",
+									"pm.test(\"Validate post object\", function () {",
+									"    pm.expect(response[0], 'There is no id').to.have.property('id');",
+									"    pm.expect(response[0].id, 'Id is not a number').to.be.a('string');",
+									"    pm.expect(response[0], 'There is no title').to.have.property('title');",
+									"    pm.expect(response[0].title, 'Title is not a string').to.be.a('string');",
+									"    pm.expect(response[0], 'There is no author').to.have.property('author');",
+									"    pm.expect(response[0].author, 'Author is not a string').to.be.a('string');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is CREATED\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"",
+									"pm.test('Validate if there are posts', function () {",
+									"    pm.expect(response, 'Response is empty').to.not.be.empty;",
+									"})",
+									"",
+									"pm.test(\"Validate post object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id, 'Id is not a number').to.be.a('string');",
+									"    pm.expect(response, 'There is no title').to.have.property('title');",
+									"    pm.expect(response.title).to.eql('Expected Post');",
+									"    pm.expect(response, 'There is no author').to.have.property('author');",
+									"    pm.expect(response.author).to.eql('Expected Author');",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    pm.collectionVariables.set('new_id', response.id);",
+									"}",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Expected Post\",\n    \"author\": \"Expected Author\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get created post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate new data is persisted\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id).to.eql( pm.collectionVariables.get('new_id'));",
+									"    pm.expect(response, 'There is no title').to.have.property('title');",
+									"    pm.expect(response.title, 'Title is not a string').to.eql('Expected Post');",
+									"    pm.expect(response, 'There is no author').to.have.property('author');",
+									"    pm.expect(response.author, 'Author is not a string').to.eql('Expected Author');",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/{{new_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"{{new_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Expect response to contain new posts', function () {",
+									"    pm.expect(response.length).to.equal(3);",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify created post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"",
+									"pm.test(\"Validate post object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id).to.eql( pm.collectionVariables.get('new_id'));",
+									"    pm.expect(response, 'There is no title').to.have.property('title');",
+									"    pm.expect(response.title).to.eql('New Post');",
+									"    pm.expect(response, 'There is no author').to.have.property('author');",
+									"    pm.expect(response.author).to.eql('New Author');",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"New Post\",\n    \"author\": \"New Author\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/posts/{{new_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"{{new_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get modified post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate modified fields are persisted\", function () {",
+									"    pm.expect(response, 'There is no title').to.have.property('title');",
+									"    pm.expect(response.title).to.eql('New Post');",
+									"    pm.expect(response, 'There is no author').to.have.property('author');",
+									"    pm.expect(response.author).to.eql('New Author');",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/{{new_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"{{new_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete created post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate post object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id).to.eql( pm.collectionVariables.get('new_id'));",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/posts/{{new_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"{{new_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all posts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Expect response to contain initial posts', function () {",
+									"    pm.expect(response.length).to.equal(2);",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get deleted post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is NOT FOUND\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/{{new_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"{{new_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete deleted post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is NOT FOUND\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/posts/{{new_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"{{new_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get not existing post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is NOT FOUND\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/not_existing_post",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"not_existing_post"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Get comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate that response is not empty', function () {",
+									"    pm.expect(response, 'Response is empty').to.not.be.empty;",
+									"})",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an array').to.be.an('array');",
+									"    pm.expect(response[0], 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an array').to.be.an('array');",
+									"    pm.expect(response[0], 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test('Expect response to contain initial comments', function () {",
+									"    pm.expect(response.length).to.equal(2);",
+									"});",
+									"",
+									"pm.test(\"Validate comment object\", function () {",
+									"    pm.expect(response[0], 'There is no id').to.have.property('id');",
+									"    pm.expect(response[0].id, 'Id is not a string').to.be.a('string');",
+									"    pm.expect(response[0], 'There is no body').to.have.property('body');",
+									"    pm.expect(response[0].body, 'Body is not a string').to.be.a('string');",
+									"    pm.expect(response[0], 'There is no postId').to.have.property('postId');",
+									"    pm.expect(response[0].postId, 'PostId is not a number').to.be.a('number');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a new comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is CREATED\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate comment object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id, 'Id is not a number').to.be.a('string');",
+									"    pm.expect(response, 'There is no body').to.have.property('body');",
+									"    pm.expect(response.body).to.eql('Expected body');",
+									"    pm.expect(response, 'There is no postId').to.have.property('postId');",
+									"    pm.expect(response.postId).to.eql(1);",
+									"});",
+									"",
+									"if (pm.response.code === 201) {",
+									"    pm.collectionVariables.set('new_comment_id', response.id);",
+									"}",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"body\": \"Expected body\",\n        \"postId\": 1\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get created comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate new data is persisted\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id, 'Id is not a number').to.be.a('string');",
+									"    pm.expect(response, 'There is no body').to.have.property('body');",
+									"    pm.expect(response.body).to.eql('Expected body');",
+									"    pm.expect(response, 'There is no postId').to.have.property('postId');",
+									"    pm.expect(response.postId).to.eql(1);",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/{{new_comment_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"{{new_comment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Expect response to contain a new comment', function () {",
+									"    pm.expect(response.length).to.equal(3);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate comment object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id, 'Id is not a number').to.eql(pm.collectionVariables.get('new_comment_id'));",
+									"    pm.expect(response, 'There is no body').to.have.property('body');",
+									"    pm.expect(response.body).to.eql('New body');",
+									"    pm.expect(response, 'There is no postId').to.have.property('postId');",
+									"    pm.expect(response.postId).to.eql(1);",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"body\": \"New body\",\n        \"postId\": 1\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/comments/{{new_comment_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"{{new_comment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get modified comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate modified values are persisted\", function () {",
+									"    pm.expect(response, 'There is no body').to.have.property('body');",
+									"    pm.expect(response.body).to.eql('New body');",
+									"    pm.expect(response, 'There is no postId').to.have.property('postId');",
+									"    pm.expect(response.postId).to.eql(1);",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/{{new_comment_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"{{new_comment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete created post Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate comment object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('id');",
+									"    pm.expect(response.id).to.eql( pm.collectionVariables.get('new_comment_id'));",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/comments/{{new_comment_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"{{new_comment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Expect response to contain initial comments', function () {",
+									"    pm.expect(response.length).to.equal(2);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get deleted comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is NOT FOUND\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/{{new_comment_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"{{new_comment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete deleted comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is NOT FOUND\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/comments/{{new_comment_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"{{new_comment_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get non exixting comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status is NOT FOUND\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/non_existing_id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"non_existing_id"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.test(\"Response status is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Validate response structure', function () {",
+									"    pm.expect(response, 'The response is not an object').to.be.an('object');",
+									"})",
+									"",
+									"pm.test(\"Validate profile object\", function () {",
+									"    pm.expect(response, 'There is no id').to.have.property('name');",
+									"    pm.expect(response.name).to.eql('typicode');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/profile",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "existing_id",
+			"value": ""
+		},
+		{
+			"key": "new_id",
+			"value": ""
+		},
+		{
+			"key": "new_comment_id",
+			"value": ""
+		}
+	]
+}
